@@ -9,7 +9,7 @@ class RegisterScreen extends StatefulWidget {
   });
 
   final VoidCallback onLogin;
-  final VoidCallback onSuccess;
+  final ValueChanged<bool> onSuccess;
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -24,6 +24,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _obscurePass = true;
   bool _obscureConfirm = true;
   bool _isLoading = false;
+  bool _isCabang = false;
 
   InputDecoration _inputDecoration(String hint) {
     return InputDecoration(
@@ -60,7 +61,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     await Future<void>.delayed(const Duration(milliseconds: 900));
     if (!mounted) return;
     setState(() => _isLoading = false);
-    widget.onSuccess();
+    widget.onSuccess(_isCabang);
   }
 
   @override
@@ -90,6 +91,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 28),
+                const Text(
+                  'Daftar sebagai',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ChoiceChip(
+                        label: const Text('Sekretaris PAC'),
+                        selected: !_isCabang,
+                        onSelected: _isLoading
+                            ? null
+                            : (value) => setState(() => _isCabang = !value),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ChoiceChip(
+                        label: const Text('Sekretaris Cabang'),
+                        selected: _isCabang,
+                        onSelected: _isLoading
+                            ? null
+                            : (value) => setState(() => _isCabang = value),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
                 const Text(
                   'Nama Lengkap',
                   style: TextStyle(fontWeight: FontWeight.w600),

@@ -7,9 +7,14 @@ import 'screens/pengajuan_screen.dart';
 import 'screens/profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, this.isCabang = false});
+  const HomeScreen({
+    super.key,
+    this.isCabang = false,
+    required this.onLogout,
+  });
 
   final bool isCabang;
+  final VoidCallback onLogout;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -21,23 +26,23 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final tabs = <_HomeTab>[
-      const _HomeTab(
+      _HomeTab(
         label: 'Beranda',
         icon: Icons.home_outlined,
         activeIcon: Icons.home,
-        content: DashboardScreen(),
+        content: DashboardScreen(isCabang: widget.isCabang),
       ),
-      const _HomeTab(
+      _HomeTab(
         label: 'Arsip',
         icon: Icons.folder_outlined,
         activeIcon: Icons.folder,
-        content: ArsipScreen(),
+        content: ArsipScreen(isCabang: widget.isCabang),
       ),
-      const _HomeTab(
+      _HomeTab(
         label: 'Pengajuan',
         icon: Icons.send_outlined,
         activeIcon: Icons.send,
-        content: PengajuanScreen(),
+        content: PengajuanScreen(isCabang: widget.isCabang),
       ),
       if (widget.isCabang)
         const _HomeTab(
@@ -46,11 +51,14 @@ class _HomeScreenState extends State<HomeScreen> {
           activeIcon: Icons.event,
           content: KegiatanScreen(),
         ),
-      const _HomeTab(
+      _HomeTab(
         label: 'Profil',
         icon: Icons.person_outline,
         activeIcon: Icons.person,
-        content: ProfileScreen(),
+        content: ProfileScreen(
+          isCabang: widget.isCabang,
+          onLogout: widget.onLogout,
+        ),
       ),
     ];
 

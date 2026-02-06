@@ -2,62 +2,151 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_palette.dart';
 
 class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({super.key});
+  const DashboardScreen({super.key, required this.isCabang});
+
+  final bool isCabang;
 
   @override
   Widget build(BuildContext context) {
+    final roleLabel = isCabang ? 'Sekretaris Cabang' : 'Sekretaris PAC';
+    final stats = isCabang
+        ? const [
+            _StatData('Arsip Surat', '12', Icons.mail),
+            _StatData('Berkas SP', '6', Icons.article),
+            _StatData('Kegiatan', '5', Icons.event),
+            _StatData('Anggota', '240', Icons.group),
+          ]
+        : const [
+            _StatData('Arsip Surat', '12', Icons.mail),
+            _StatData('Berkas', '16', Icons.folder),
+            _StatData('Pengajuan', '4', Icons.send),
+            _StatData('Anggota', '128', Icons.group),
+          ];
+    final quickActions = isCabang
+        ? const [
+            _QuickActionData('Tambah Arsip', Icons.add),
+            _QuickActionData('Buat Kegiatan', Icons.event_available),
+            _QuickActionData('Verifikasi PAC', Icons.verified_user),
+          ]
+        : const [
+            _QuickActionData('Tambah Arsip', Icons.add),
+            _QuickActionData('Tambah Anggota', Icons.person_add),
+            _QuickActionData('Ajukan Surat', Icons.send),
+          ];
+    final activities = isCabang
+        ? const [
+            _ActivityData(
+              'Berkas SP',
+              'Ketua PC IPNU',
+              '2 jam lalu',
+              Icons.article,
+            ),
+            _ActivityData(
+              'Kegiatan',
+              'Rapat koordinasi',
+              '5 jam lalu',
+              Icons.event,
+            ),
+            _ActivityData(
+              'Pengajuan',
+              'PAC A disetujui',
+              'Kemarin',
+              Icons.send,
+            ),
+          ]
+        : const [
+            _ActivityData(
+              'Arsip Surat',
+              'Undangan rapat',
+              '1 jam lalu',
+              Icons.mail,
+            ),
+            _ActivityData(
+              'Pengajuan',
+              'Menunggu verifikasi',
+              '4 jam lalu',
+              Icons.send,
+            ),
+            _ActivityData(
+              'Anggota',
+              'Ahmad ditambahkan',
+              'Kemarin',
+              Icons.group,
+            ),
+          ];
+
     return SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Container(
-                  height: 44,
-                  width: 44,
-                  decoration: BoxDecoration(
-                    color: AppPalette.primarySoft,
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: const Icon(Icons.person, color: AppPalette.primary),
+            Container(
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [AppPalette.primary, AppPalette.primaryDark],
                 ),
-                const SizedBox(width: 12),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Selamat datang',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: AppPalette.textMuted,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppPalette.primary.withValues(alpha: 0.18),
+                    blurRadius: 16,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    height: 48,
+                    width: 48,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.16),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Icon(Icons.person, color: Colors.white),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          roleLabel,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.white70,
+                          ),
                         ),
-                      ),
-                      Text(
-                        'Sekretaris PAC',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: AppPalette.primarySoft,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: const Text(
-                    'Periode 2025-2026',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: AppPalette.primaryDark,
+                        const SizedBox(height: 4),
+                        const Text(
+                          'Selamat datang kembali',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              ],
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Text(
+                      'Periode 2025-2026',
+                      style: TextStyle(fontSize: 11, color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 20),
             GridView.count(
@@ -66,19 +155,13 @@ class DashboardScreen extends StatelessWidget {
               mainAxisSpacing: 12,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              children: const [
-                _StatCard(title: 'Arsip Surat', value: '12', icon: Icons.mail),
-                _StatCard(title: 'Anggota', value: '128', icon: Icons.group),
-                _StatCard(
-                  title: 'Pengajuan',
-                  value: '4',
-                  icon: Icons.send,
-                ),
-                _StatCard(
-                  title: 'Berkas',
-                  value: '16',
-                  icon: Icons.folder,
-                ),
+              children: [
+                for (final item in stats)
+                  _StatCard(
+                    title: item.title,
+                    value: item.value,
+                    icon: item.icon,
+                  ),
               ],
             ),
             const SizedBox(height: 20),
@@ -87,39 +170,44 @@ class DashboardScreen extends StatelessWidget {
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 12),
-            Row(
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
               children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () {},
-                    icon: const Icon(Icons.add),
-                    label: const Text('Arsip'),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () {},
-                    icon: const Icon(Icons.person_add),
-                    label: const Text('Anggota'),
-                  ),
-                ),
+                for (final action in quickActions)
+                  _QuickActionButton(title: action.title, icon: action.icon),
               ],
             ),
+            const SizedBox(height: 20),
+            const Text(
+              'Aktivitas Terbaru',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+            ),
             const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton.icon(
-                onPressed: () {},
-                icon: const Icon(Icons.calendar_today),
-                label: const Text('Aktifkan Periode'),
-              ),
+            Column(
+              children: [
+                for (final activity in activities)
+                  _ActivityTile(
+                    title: activity.title,
+                    subtitle: activity.subtitle,
+                    timeLabel: activity.timeLabel,
+                    icon: activity.icon,
+                  ),
+              ],
             ),
           ],
         ),
       ),
     );
   }
+}
+
+class _StatData {
+  const _StatData(this.title, this.value, this.icon);
+
+  final String title;
+  final String value;
+  final IconData icon;
 }
 
 class _StatCard extends StatelessWidget {
@@ -141,6 +229,13 @@ class _StatCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppPalette.border),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,6 +258,103 @@ class _StatCard extends StatelessWidget {
           Text(
             title,
             style: const TextStyle(fontSize: 12, color: AppPalette.textMuted),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _QuickActionData {
+  const _QuickActionData(this.title, this.icon);
+
+  final String title;
+  final IconData icon;
+}
+
+class _QuickActionButton extends StatelessWidget {
+  const _QuickActionButton({required this.title, required this.icon});
+
+  final String title;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton.icon(
+      onPressed: () {},
+      icon: Icon(icon),
+      label: Text(title),
+      style: OutlinedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      ),
+    );
+  }
+}
+
+class _ActivityData {
+  const _ActivityData(this.title, this.subtitle, this.timeLabel, this.icon);
+
+  final String title;
+  final String subtitle;
+  final String timeLabel;
+  final IconData icon;
+}
+
+class _ActivityTile extends StatelessWidget {
+  const _ActivityTile({
+    required this.title,
+    required this.subtitle,
+    required this.timeLabel,
+    required this.icon,
+  });
+
+  final String title;
+  final String subtitle;
+  final String timeLabel;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppPalette.border),
+      ),
+      child: Row(
+        children: [
+          Container(
+            height: 40,
+            width: 40,
+            decoration: BoxDecoration(
+              color: AppPalette.primarySoft,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: AppPalette.primary),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  style: const TextStyle(color: AppPalette.textMuted),
+                ),
+              ],
+            ),
+          ),
+          Text(
+            timeLabel,
+            style: const TextStyle(fontSize: 11, color: AppPalette.textMuted),
           ),
         ],
       ),

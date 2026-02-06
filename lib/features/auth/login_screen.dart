@@ -9,7 +9,7 @@ class LoginScreen extends StatefulWidget {
   });
 
   final VoidCallback onRegister;
-  final VoidCallback onSuccess;
+  final ValueChanged<bool> onSuccess;
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -21,6 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _obscure = true;
   bool _isLoading = false;
+  bool _isCabang = false;
 
   InputDecoration _inputDecoration(String hint) {
     return InputDecoration(
@@ -57,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
     await Future<void>.delayed(const Duration(milliseconds: 900));
     if (!mounted) return;
     setState(() => _isLoading = false);
-    widget.onSuccess();
+    widget.onSuccess(_isCabang);
   }
 
   @override
@@ -85,6 +86,69 @@ class _LoginScreenState extends State<LoginScreen> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 28),
+                const Text(
+                  'Masuk sebagai',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ChoiceChip(
+                        label: const Text('Sekretaris PAC'),
+                        selected: !_isCabang,
+                        onSelected: _isLoading
+                            ? null
+                            : (value) => setState(() => _isCabang = !value),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ChoiceChip(
+                        label: const Text('Sekretaris Cabang'),
+                        selected: _isCabang,
+                        onSelected: _isLoading
+                            ? null
+                            : (value) => setState(() => _isCabang = value),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: _isLoading
+                            ? null
+                            : () {
+                                setState(() {
+                                  _isCabang = false;
+                                  _emailController.text = 'pac.demo@laci.id';
+                                  _passwordController.text = '123456';
+                                });
+                              },
+                        child: const Text('Akun PAC Demo'),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: _isLoading
+                            ? null
+                            : () {
+                                setState(() {
+                                  _isCabang = true;
+                                  _emailController.text = 'cabang.demo@laci.id';
+                                  _passwordController.text = '123456';
+                                });
+                              },
+                        child: const Text('Akun Cabang Demo'),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
                 const Text(
                   'Alamat Email',
                   style: TextStyle(fontWeight: FontWeight.w600),

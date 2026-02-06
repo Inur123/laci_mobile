@@ -25,6 +25,7 @@ class AppRoot extends StatefulWidget {
 
 class _AppRootState extends State<AppRoot> {
   AppStartFlow _flow = AppStartFlow.loading;
+  bool _isCabang = false;
 
   @override
   void initState() {
@@ -54,9 +55,16 @@ class _AppRootState extends State<AppRoot> {
     });
   }
 
-  void _goToHome() {
+  void _goToHome(bool isCabang) {
     setState(() {
+      _isCabang = isCabang;
       _flow = AppStartFlow.home;
+    });
+  }
+
+  void _logout() {
+    setState(() {
+      _flow = AppStartFlow.login;
     });
   }
 
@@ -80,7 +88,7 @@ class _AppRootState extends State<AppRoot> {
       case AppStartFlow.register:
         return RegisterScreen(onLogin: _goToLogin, onSuccess: _goToHome);
       case AppStartFlow.home:
-        return const HomeScreen();
+        return HomeScreen(isCabang: _isCabang, onLogout: _logout);
     }
   }
 }
