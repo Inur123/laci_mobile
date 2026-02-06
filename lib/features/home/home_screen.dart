@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_palette.dart';
-import 'screens/arsip_screen.dart';
+import 'arsip/screens/arsip_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/kegiatan_screen.dart';
-import 'screens/pengajuan_screen.dart';
+import 'pengajuan/screens/pengajuan_screen.dart';
 import 'screens/profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({
-    super.key,
-    this.isCabang = false,
-    required this.onLogout,
-  });
+  const HomeScreen({super.key, this.isCabang = false, required this.onLogout});
 
   final bool isCabang;
   final VoidCallback onLogout;
