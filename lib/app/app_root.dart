@@ -78,7 +78,7 @@ class _AppRootState extends State<AppRoot> {
   Widget build(BuildContext context) {
     switch (_flow) {
       case AppStartFlow.loading:
-        return const SplashScreen();
+        return const SplashScreen(showLogo: true);
       case AppStartFlow.onboarding:
         return OnboardingScreen(onFinish: _completeOnboarding);
       case AppStartFlow.returningSplash:

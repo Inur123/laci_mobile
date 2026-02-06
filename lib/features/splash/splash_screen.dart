@@ -24,6 +24,12 @@ class SplashScreen extends StatelessWidget {
               'Sistem Manajemen Organisasi',
               style: TextStyle(color: AppPalette.textMuted),
             ),
+            const SizedBox(height: 18),
+            const SizedBox(
+              height: 24,
+              width: 24,
+              child: CircularProgressIndicator(strokeWidth: 2.4),
+            ),
           ],
         ),
       ),

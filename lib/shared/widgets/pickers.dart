@@ -8,11 +8,15 @@ class FormActionField extends StatelessWidget {
     required this.label,
     required this.valueText,
     required this.onTap,
+    this.placeholder,
+    this.isError = false,
   });
 
   final String label;
   final String valueText;
   final VoidCallback onTap;
+  final String? placeholder;
+  final bool isError;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +28,9 @@ class FormActionField extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppPalette.border),
+          border: Border.all(
+            color: isError ? AppPalette.error : AppPalette.border,
+          ),
         ),
         child: Row(
           children: [
@@ -35,11 +41,13 @@ class FormActionField extends StatelessWidget {
               ),
             ),
             Text(
-              valueText.isEmpty ? 'Atur Sekarang' : valueText,
+              valueText.isEmpty ? (placeholder ?? 'Pilih') : valueText,
               style: TextStyle(
-                color: valueText.isEmpty
-                    ? AppPalette.primary
-                    : AppPalette.textMuted,
+                color: isError
+                    ? AppPalette.error
+                    : (valueText.isEmpty
+                          ? AppPalette.primary
+                          : AppPalette.textMuted),
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -59,19 +67,37 @@ class LabeledActionField extends StatelessWidget {
     required this.valueText,
     required this.onTap,
     this.backgroundColor = Colors.white,
+    this.placeholder,
+    this.isError = false,
+    this.isRequired = false,
   });
 
   final String label;
   final String valueText;
   final VoidCallback onTap;
   final Color backgroundColor;
+  final String? placeholder;
+  final bool isError;
+  final bool isRequired;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
+        Row(
+          children: [
+            Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
+            if (isRequired)
+              const Text(
+                ' *',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: AppPalette.error,
+                ),
+              ),
+          ],
+        ),
         const SizedBox(height: 8),
         InkWell(
           onTap: onTap,
@@ -81,17 +107,21 @@ class LabeledActionField extends StatelessWidget {
             decoration: BoxDecoration(
               color: backgroundColor,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppPalette.border),
+              border: Border.all(
+                color: isError ? AppPalette.error : AppPalette.border,
+              ),
             ),
             child: Row(
               children: [
                 Expanded(
                   child: Text(
-                    valueText.isEmpty ? 'Atur Sekarang' : valueText,
+                    valueText.isEmpty ? (placeholder ?? 'Pilih') : valueText,
                     style: TextStyle(
-                      color: valueText.isEmpty
-                          ? AppPalette.primary
-                          : AppPalette.textMuted,
+                      color: isError
+                          ? AppPalette.error
+                          : (valueText.isEmpty
+                                ? AppPalette.primary
+                                : AppPalette.textMuted),
                       fontWeight: FontWeight.w600,
                     ),
                   ),

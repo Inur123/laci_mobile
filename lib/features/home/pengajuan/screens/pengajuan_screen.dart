@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:open_filex/open_filex.dart';
+import '../../../../app/app.dart';
 import '../../../../core/theme/app_palette.dart';
 import '../../../../shared/widgets/pickers.dart';
 
@@ -235,6 +236,7 @@ class _PengajuanScreenState extends State<PengajuanScreen> {
   }
 
   Future<void> _showForm(BuildContext context) async {
+    final parentContext = context;
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -245,6 +247,14 @@ class _PengajuanScreenState extends State<PengajuanScreen> {
         String? fileName;
         String? penerima;
         DateTime? tanggal;
+        final nomorController = TextEditingController();
+        final keperluanController = TextEditingController();
+        final deskripsiController = TextEditingController();
+        String? nomorError,
+            keperluanError,
+            penerimaError,
+            tanggalError,
+            fileError;
         return StatefulBuilder(
           builder: (context, setModalState) {
             return Padding(
@@ -276,11 +286,75 @@ class _PengajuanScreenState extends State<PengajuanScreen> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  const _FormField(label: 'Nomor Surat', hint: '002/PAC/2026'),
+                  const Row(
+                    children: [
+                      Text(
+                        'Nomor Surat',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        ' *',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: AppPalette.error,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: nomorController,
+                    onChanged: (value) {
+                      if (nomorError != null && value.trim().isNotEmpty) {
+                        setModalState(() => nomorError = null);
+                      }
+                    },
+                    decoration: InputDecoration(
+                      hintText: nomorError != null
+                          ? 'Wajib diisi'
+                          : '002/PAC/2026',
+                      hintStyle: nomorError != null
+                          ? const TextStyle(color: AppPalette.error)
+                          : null,
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide(
+                          color: nomorError != null
+                              ? AppPalette.error
+                              : AppPalette.border,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide(
+                          color: nomorError != null
+                              ? AppPalette.error
+                              : AppPalette.border,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide(
+                          color: nomorError != null
+                              ? AppPalette.error
+                              : AppPalette.border,
+                        ),
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 12),
                   LabeledActionField(
                     label: 'Penerima',
                     valueText: penerima ?? '',
+                    placeholder: 'Pilih Penerima',
+                    isError: penerimaError != null,
+                    isRequired: true,
                     onTap: () async {
                       final val = await showSelectSheet(
                         context: context,
@@ -288,32 +362,137 @@ class _PengajuanScreenState extends State<PengajuanScreen> {
                         options: const ['IPNU', 'IPPNU', 'BERSAMA'],
                         initialValue: penerima,
                       );
-                      if (val != null) setModalState(() => penerima = val);
+                      if (val != null) {
+                        setModalState(() {
+                          penerima = val;
+                          penerimaError = null;
+                        });
+                      }
                     },
                   ),
+                  const SizedBox(height: 12),
                   const SizedBox(height: 12),
                   LabeledActionField(
                     label: 'Tanggal',
                     valueText: tanggal == null
                         ? ''
                         : '${tanggal!.year}-${tanggal!.month.toString().padLeft(2, '0')}-${tanggal!.day.toString().padLeft(2, '0')}',
+                    placeholder: 'Pilih Tanggal',
+                    isError: tanggalError != null,
+                    isRequired: true,
                     onTap: () async {
                       final val = await showDateSheet(
                         context: context,
                         title: 'Pilih Tanggal',
                         initialValue: tanggal,
                       );
-                      if (val != null) setModalState(() => tanggal = val);
+                      if (val != null) {
+                        setModalState(() {
+                          tanggal = val;
+                          tanggalError = null;
+                        });
+                      }
                     },
                   ),
                   const SizedBox(height: 12),
-                  const _FormField(label: 'Keperluan', hint: 'Kebutuhan surat'),
                   const SizedBox(height: 12),
-                  const _FormField(label: 'Deskripsi', hint: 'Rincian singkat'),
+                  const Row(
+                    children: [
+                      Text(
+                        'Keperluan',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        ' *',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: AppPalette.error,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: keperluanController,
+                    onChanged: (value) {
+                      if (keperluanError != null && value.trim().isNotEmpty) {
+                        setModalState(() => keperluanError = null);
+                      }
+                    },
+                    decoration: InputDecoration(
+                      hintText: keperluanError != null
+                          ? 'Wajib diisi'
+                          : 'Kebutuhan surat',
+                      hintStyle: keperluanError != null
+                          ? const TextStyle(color: AppPalette.error)
+                          : null,
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide(
+                          color: keperluanError != null
+                              ? AppPalette.error
+                              : AppPalette.border,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide(
+                          color: keperluanError != null
+                              ? AppPalette.error
+                              : AppPalette.border,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide(
+                          color: keperluanError != null
+                              ? AppPalette.error
+                              : AppPalette.border,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Deskripsi',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: deskripsiController,
+                    decoration: InputDecoration(
+                      hintText: 'Rincian singkat',
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide(color: AppPalette.border),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide(color: AppPalette.border),
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 16),
                   LabeledActionField(
                     label: 'Upload File',
                     valueText: fileName ?? '',
+                    placeholder: fileError != null
+                        ? 'Wajib diisi'
+                        : 'Pilih File',
+                    isError: fileError != null,
+                    isRequired: true,
                     onTap: () async {
                       try {
                         final res = await FilePicker.platform.pickFiles(
@@ -321,22 +500,16 @@ class _PengajuanScreenState extends State<PengajuanScreen> {
                         );
                         if (res != null && res.files.isNotEmpty) {
                           final f = res.files.first;
-                          setModalState(() => fileName = f.name);
-                        } else {
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Pemilihan file dibatalkan'),
-                              ),
-                            );
-                          }
+                          setModalState(() {
+                            fileName = f.name;
+                            fileError = null;
+                          });
                         }
                       } catch (_) {
                         if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('File picker tidak tersedia'),
-                            ),
+                          AppNotify.error(
+                            context,
+                            'File picker tidak tersedia',
                           );
                         }
                       }
@@ -358,7 +531,44 @@ class _PengajuanScreenState extends State<PengajuanScreen> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: FilledButton(
-                          onPressed: () => Navigator.of(context).pop(),
+                          onPressed: () {
+                            final nomor = nomorController.text.trim();
+                            final keperluan = keperluanController.text.trim();
+                            final valid =
+                                nomor.isNotEmpty &&
+                                (penerima != null && penerima!.isNotEmpty) &&
+                                tanggal != null &&
+                                keperluan.isNotEmpty &&
+                                (fileName ?? '').trim().isNotEmpty;
+                            if (!valid) {
+                              setModalState(() {
+                                nomorError = nomor.isEmpty
+                                    ? 'Wajib diisi'
+                                    : null;
+                                keperluanError = keperluan.isEmpty
+                                    ? 'Wajib diisi'
+                                    : null;
+                                fileError = (fileName ?? '').trim().isEmpty
+                                    ? 'Wajib diisi'
+                                    : null;
+                                penerimaError =
+                                    (penerima == null || penerima!.isEmpty)
+                                    ? 'Wajib diisi'
+                                    : null;
+                                tanggalError = tanggal == null
+                                    ? 'Wajib diisi'
+                                    : null;
+                              });
+                              return;
+                            }
+                            Navigator.of(context).pop();
+                            if (parentContext.mounted) {
+                              AppNotify.info(
+                                parentContext,
+                                'Pengajuan berhasil ditambahkan',
+                              );
+                            }
+                          },
                           child: const Text('Simpan (Dummy)'),
                         ),
                       ),
@@ -457,6 +667,12 @@ class _PengajuanScreenState extends State<PengajuanScreen> {
                             if (!rejected || !context.mounted) return;
                             Navigator.of(context).pop();
                             _updateStatus(item, 'DITOLAK');
+                            if (parentContext.mounted) {
+                              AppNotify.info(
+                                parentContext,
+                                'Pengajuan ditolak',
+                              );
+                            }
                           },
                           child: const Text('Tolak'),
                         ),
@@ -467,6 +683,12 @@ class _PengajuanScreenState extends State<PengajuanScreen> {
                           onPressed: () {
                             Navigator.of(context).pop();
                             _updateStatus(item, 'DITERIMA');
+                            if (parentContext.mounted) {
+                              AppNotify.info(
+                                parentContext,
+                                'Pengajuan disetujui',
+                              );
+                            }
                           },
                           child: const Text('Setujui'),
                         ),
@@ -507,16 +729,12 @@ class _PengajuanScreenState extends State<PengajuanScreen> {
     if (url != null && url.isNotEmpty) {
       final ok = await launchUrlString(url);
       if (!ok && mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Gagal membuka file')));
+        AppNotify.error(context, 'Gagal membuka file');
       }
       return;
     }
     if (mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('File belum tersedia')));
+      AppNotify.info(context, 'File belum tersedia');
     }
   }
 
@@ -524,6 +742,7 @@ class _PengajuanScreenState extends State<PengajuanScreen> {
     String? penerima = item.penerima;
     DateTime? tanggal;
     String? fileName = item.fileName;
+    String? nomorError, keperluanError, penerimaError, tanggalError, fileError;
 
     final nomorController = TextEditingController(text: item.nomorSurat);
     final keperluanController = TextEditingController(text: item.keperluan);
@@ -567,15 +786,36 @@ class _PengajuanScreenState extends State<PengajuanScreen> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Text(
-                    'Nomor Surat',
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  const Row(
+                    children: [
+                      Text(
+                        'Nomor Surat',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        ' *',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: AppPalette.error,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 8),
                   TextField(
                     controller: nomorController,
+                    onChanged: (value) {
+                      if (nomorError != null && value.trim().isNotEmpty) {
+                        setModalState(() => nomorError = null);
+                      }
+                    },
                     decoration: InputDecoration(
-                      hintText: '002/PAC/2026',
+                      hintText: nomorError != null
+                          ? 'Wajib diisi'
+                          : '002/PAC/2026',
+                      hintStyle: nomorError != null
+                          ? const TextStyle(color: AppPalette.error)
+                          : null,
                       filled: true,
                       fillColor: Colors.white,
                       contentPadding: const EdgeInsets.symmetric(
@@ -584,11 +824,27 @@ class _PengajuanScreenState extends State<PengajuanScreen> {
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
-                        borderSide: BorderSide(color: AppPalette.border),
+                        borderSide: BorderSide(
+                          color: nomorError != null
+                              ? AppPalette.error
+                              : AppPalette.border,
+                        ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
-                        borderSide: BorderSide(color: AppPalette.border),
+                        borderSide: BorderSide(
+                          color: nomorError != null
+                              ? AppPalette.error
+                              : AppPalette.border,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide(
+                          color: nomorError != null
+                              ? AppPalette.error
+                              : AppPalette.border,
+                        ),
                       ),
                     ),
                   ),
@@ -596,6 +852,9 @@ class _PengajuanScreenState extends State<PengajuanScreen> {
                   LabeledActionField(
                     label: 'Penerima',
                     valueText: penerima ?? '',
+                    placeholder: 'Pilih Penerima',
+                    isError: penerimaError != null,
+                    isRequired: true,
                     onTap: () async {
                       final val = await showSelectSheet(
                         context: context,
@@ -603,34 +862,70 @@ class _PengajuanScreenState extends State<PengajuanScreen> {
                         options: const ['IPNU', 'IPPNU', 'BERSAMA'],
                         initialValue: penerima,
                       );
-                      if (val != null) setModalState(() => penerima = val);
+                      if (val != null) {
+                        setModalState(() {
+                          penerima = val;
+                          penerimaError = null;
+                        });
+                      }
                     },
                   ),
+                  const SizedBox(height: 12),
                   const SizedBox(height: 12),
                   LabeledActionField(
                     label: 'Tanggal',
                     valueText: tanggal == null
                         ? item.tanggal
                         : '${tanggal!.year}-${tanggal!.month.toString().padLeft(2, '0')}-${tanggal!.day.toString().padLeft(2, '0')}',
+                    placeholder: 'Pilih Tanggal',
+                    isError: tanggalError != null,
+                    isRequired: true,
                     onTap: () async {
                       final val = await showDateSheet(
                         context: context,
                         title: 'Pilih Tanggal',
                         initialValue: tanggal,
                       );
-                      if (val != null) setModalState(() => tanggal = val);
+                      if (val != null) {
+                        setModalState(() {
+                          tanggal = val;
+                          tanggalError = null;
+                        });
+                      }
                     },
                   ),
                   const SizedBox(height: 12),
-                  Text(
-                    'Keperluan',
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  const SizedBox(height: 12),
+                  const Row(
+                    children: [
+                      Text(
+                        'Keperluan',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        ' *',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: AppPalette.error,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 8),
                   TextField(
                     controller: keperluanController,
+                    onChanged: (value) {
+                      if (keperluanError != null && value.trim().isNotEmpty) {
+                        setModalState(() => keperluanError = null);
+                      }
+                    },
                     decoration: InputDecoration(
-                      hintText: 'Kebutuhan surat',
+                      hintText: keperluanError != null
+                          ? 'Wajib diisi'
+                          : 'Kebutuhan surat',
+                      hintStyle: keperluanError != null
+                          ? const TextStyle(color: AppPalette.error)
+                          : null,
                       filled: true,
                       fillColor: Colors.white,
                       contentPadding: const EdgeInsets.symmetric(
@@ -639,11 +934,27 @@ class _PengajuanScreenState extends State<PengajuanScreen> {
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
-                        borderSide: BorderSide(color: AppPalette.border),
+                        borderSide: BorderSide(
+                          color: keperluanError != null
+                              ? AppPalette.error
+                              : AppPalette.border,
+                        ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
-                        borderSide: BorderSide(color: AppPalette.border),
+                        borderSide: BorderSide(
+                          color: keperluanError != null
+                              ? AppPalette.error
+                              : AppPalette.border,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide(
+                          color: keperluanError != null
+                              ? AppPalette.error
+                              : AppPalette.border,
+                        ),
                       ),
                     ),
                   ),
@@ -677,6 +988,11 @@ class _PengajuanScreenState extends State<PengajuanScreen> {
                   LabeledActionField(
                     label: 'Upload File',
                     valueText: fileName ?? '',
+                    placeholder: fileError != null
+                        ? 'Wajib diisi'
+                        : 'Pilih File',
+                    isError: fileError != null,
+                    isRequired: true,
                     onTap: () async {
                       try {
                         final res = await FilePicker.platform.pickFiles(
@@ -684,22 +1000,16 @@ class _PengajuanScreenState extends State<PengajuanScreen> {
                         );
                         if (res != null && res.files.isNotEmpty) {
                           final f = res.files.first;
-                          setModalState(() => fileName = f.name);
-                        } else {
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Pemilihan file dibatalkan'),
-                              ),
-                            );
-                          }
+                          setModalState(() {
+                            fileName = f.name;
+                            fileError = null;
+                          });
                         }
                       } catch (_) {
                         if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('File picker tidak tersedia'),
-                            ),
+                          AppNotify.error(
+                            context,
+                            'File picker tidak tersedia',
                           );
                         }
                       }
@@ -722,28 +1032,61 @@ class _PengajuanScreenState extends State<PengajuanScreen> {
                       Expanded(
                         child: FilledButton(
                           onPressed: () {
-                            final tanggalValue = tanggal == null
+                            final nomorValue = nomorController.text.trim();
+                            final effNomor = nomorValue.isEmpty
+                                ? item.nomorSurat
+                                : nomorValue;
+                            final effPenerima = (penerima ?? item.penerima)
+                                .trim();
+                            final effTanggal = tanggal == null
                                 ? item.tanggal
                                 : '${tanggal!.year}-${tanggal!.month.toString().padLeft(2, '0')}-${tanggal!.day.toString().padLeft(2, '0')}';
-                            final nomorValue = nomorController.text.trim();
                             final keperluanValue = keperluanController.text
                                 .trim();
+                            final effKeperluan = keperluanValue.isEmpty
+                                ? item.keperluan
+                                : keperluanValue;
                             final deskripsiValue = deskripsiController.text
                                 .trim();
+                            final effDeskripsi = deskripsiValue.isEmpty
+                                ? item.deskripsi
+                                : deskripsiValue;
+                            final effFileName = (fileName ?? item.fileName)
+                                .trim();
+                            final valid =
+                                effNomor.isNotEmpty &&
+                                effPenerima.isNotEmpty &&
+                                effTanggal.isNotEmpty &&
+                                effKeperluan.isNotEmpty &&
+                                effFileName.isNotEmpty;
+                            if (!valid) {
+                              setModalState(() {
+                                nomorError = effNomor.isEmpty
+                                    ? 'Wajib diisi'
+                                    : null;
+                                keperluanError = effKeperluan.isEmpty
+                                    ? 'Wajib diisi'
+                                    : null;
+                                fileError = effFileName.isEmpty
+                                    ? 'Wajib diisi'
+                                    : null;
+                                penerimaError = effPenerima.isEmpty
+                                    ? 'Wajib diisi'
+                                    : null;
+                                tanggalError = effTanggal.isEmpty
+                                    ? 'Wajib diisi'
+                                    : null;
+                              });
+                              return;
+                            }
                             _updateItem(
                               item,
                               item.copyWith(
-                                nomorSurat: nomorValue.isEmpty
-                                    ? item.nomorSurat
-                                    : nomorValue,
-                                penerima: penerima ?? item.penerima,
-                                tanggal: tanggalValue,
-                                keperluan: keperluanValue.isEmpty
-                                    ? item.keperluan
-                                    : keperluanValue,
-                                deskripsi: deskripsiValue.isEmpty
-                                    ? item.deskripsi
-                                    : deskripsiValue,
+                                nomorSurat: effNomor,
+                                penerima: effPenerima,
+                                tanggal: effTanggal,
+                                keperluan: effKeperluan,
+                                deskripsi: effDeskripsi,
                                 fileName: fileName ?? item.fileName,
                               ),
                             );
