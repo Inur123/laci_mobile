@@ -19,7 +19,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       title: 'Selamat Datang di Laci Digital',
       description:
           'Kelola organisasi lebih rapi, cepat, dan terintegrasi dari satu aplikasi.',
-      assetImage: 'assets/images/logo-laci.png',
+      assetImage: 'assets/images/logo-laci-new.png',
     ),
     _SimpleOnboardingPageData(
       title: 'Kelola Administrasi',

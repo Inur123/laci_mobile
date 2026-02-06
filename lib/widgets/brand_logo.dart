@@ -17,8 +17,9 @@ class BrandLogo extends StatelessWidget {
       ),
       clipBehavior: Clip.antiAlias,
       child: Image.asset(
-        'assets/images/logo-laci.png',
+        'assets/images/logo-laci-new.png',
         fit: BoxFit.cover,
+        filterQuality: FilterQuality.high,
         errorBuilder: (context, error, stackTrace) {
           return Center(
             child: Text(
